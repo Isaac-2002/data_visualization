@@ -210,8 +210,7 @@ daily_streams
 
 
 ```{r}
-
-highlight_dates <- as.Date(c("2018-04-26", "2019-09-05"))
+highlight_dates <- as.Date(c("2018-04-20", "2019-08-27"))
 
 post_malone <- data %>% 
   filter(Artist == "Post Malone") %>% 
@@ -219,35 +218,50 @@ post_malone <- data %>%
   summarise(count = n())
 
 highlight_counts <- post_malone %>%
-  filter(Date %in% highlight_dates)
+  filter(Date %in% highlight_dates) %>% 
+  mutate(label = c("Album Release:\nBeerbongs & Bentleys", "Album Release:\nHollywood's bleeding"))
 
-post_malone_plot <- ggplot(aes(x = Date, y = count)) +
-  geom_line(size = 1)+
-  labs(
-  title = "Song in the top 200 spike after an album release",
-  subtitle = "Number of Post Malone's song in the top 200 (2017-2021)",
-  caption = "Source: Spotify"
+
+post_plot <- ggplot(post_malone, aes(x = Date, y = count)) +
+  geom_line(size = 1, color = "#1DB954") +
+  geom_point(
+    data = highlight_counts, 
+    aes(x = Date, y = count), 
+    shape = 21,          
+    color = "red",       
+    fill = NA,      
+    size = 8,             
+    stroke = 0.8         
   ) +
-  theme_minimal()+
+  geom_text(
+    data = highlight_counts,
+    aes(x = Date, y = count, label = label),
+    vjust = 2,            
+    hjust = 0,           
+    color = "red",
+    size = 3,
+    fontface = "bold") + 
+  labs(
+    title = "Songs in the Top 200 Spike After an Album Release",
+    subtitle = "Number of Post Malone's Songs in the Top 200 (2017-2021)", 
+    caption = "Source: Spotify"
+  ) +
+  theme_minimal() +
   theme(
-  axis.title = element_blank(),
-  axis.text.x = element_text(face = "bold", size = 10, color = "#191414"),
-  axis.text.y = element_text(face = "bold", size = 10, color = "#191414"),
-  plot.title = element_text(size = 16, face = "bold", color = "#1DB954"),
-  plot.subtitle = element_text(size = 12, face = "bold", color = "#191414"),
-  plot.caption = element_text(size = 12, color = "#1DB954", hjust = 1, face = "bold"),
-  )+
+    axis.title = element_blank(),
+    axis.text.x = element_text(face = "bold", size = 10, color = "#191414"),
+    axis.text.y = element_text(face = "bold", size = 10, color = "#191414"),
+    plot.title = element_text(size = 16, face = "bold", color = "#1DB954"),
+    plot.subtitle = element_text(size = 12, face = "bold", color = "#191414"),
+    plot.caption = element_text(size = 12, color = "#1DB954", hjust = 1, face = "bold")
+  ) +
   scale_x_date(
     date_labels = "%b\n%Y",
-    date_breaks = "4 month"
-  )+
-  geom_point(data = highlight_dates, aes(x = Date, y = count),
-             color = "#1DB954", size = 3, shape = 21, fill = "white", stroke = 1.5)
+    date_breaks = "4 months" 
+  ) 
 
 
-post_malone_plot
-
-
+post_plot
 ```
 
 
